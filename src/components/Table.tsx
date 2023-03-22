@@ -107,6 +107,13 @@ const Table = observer(() => {
         sizeStore.setResizedItem('col', columnIndex, width);
     }
 
+    function nextButtonHandler(){
+        peopleStore.nextPage();
+    }
+    function prevButtonHandler(){
+        peopleStore.prevPage();
+    }
+
 // TODO: Add separate component for table header cell
     return (
         <div>
@@ -117,7 +124,7 @@ const Table = observer(() => {
             </div>
             {isPlaceholderShown && <p>No data. Fetch from server or add characters manually.</p>}
             {isLoading && <p>Loading...</p>}
-            {!isPlaceholderShown && !isLoading && <table className={styles.table}>
+            {!isPlaceholderShown && !isLoading &&<table className={styles.table}>
                 <thead>
                 <tr>
                     <th className={styles.table__header} onClick={action(() => {
@@ -205,6 +212,13 @@ const Table = observer(() => {
                 />)}
                 </tbody>
             </table>}
+                {!isPlaceholderShown &&
+                    <div className={styles.pagination}>
+                        <button onClick={prevButtonHandler} disabled={peopleStore.isFirstPage}>Previous page</button>
+                        {peopleStore.page}
+                        <button onClick={nextButtonHandler} disabled={peopleStore.isLastPage}>Next page</button>
+                    </div>
+                }
         </div>
     );
 });

@@ -5,10 +5,35 @@ import sizeStore from './Size';
 import Utils from "../utils/Utils";
 class PeopleStore{
     people : People[] = [];
+    page = 1;
+    isFirstPage = true;
+    isLastPage = false;
     status: 'init' | 'success' | 'loading' | 'error' = 'init';
     constructor() {
         makeAutoObservable(this);
+        this.init();
+    }
+
+    init(){
         const peopleString = localStorage.getItem('peopleData');
+        const page = localStorage.getItem('currentPage');
+        const lastPageString = localStorage.getItem('lastPage');
+        const firstPageString = localStorage.getItem('firstPage');
+        if(page){
+            const numberPage = Number(page);
+            if(!isNaN(numberPage)){
+                this.page = Number(page);
+            }
+        } else {
+            this.page = 1;
+            this.savePage();
+        }
+        if(lastPageString){
+            this.isLastPage = JSON.parse(lastPageString);
+        }
+        if(firstPageString){
+            this.isFirstPage = JSON.parse(firstPageString);
+        }
         if(peopleString){
             this.people = JSON.parse(peopleString);
         }
@@ -20,7 +45,11 @@ class PeopleStore{
     fetchPeople(): void {
         this.people = [];
         this.status = 'loading';
-        fetch(import.meta.env.VITE_API_URL + 'people')
+        let url = `${import.meta.env.VITE_API_URL + 'people'}`;
+        if(this.page){
+            url += `/?page=${this.page}`;
+        }
+        fetch(url)
             .then(resp => resp.json())
             .then(action('fetchSuccess',json => {
                 this.setPeople([...this.people, ...json.results]);
@@ -29,7 +58,30 @@ class PeopleStore{
                 }
                 this.status = 'success';
                 sizeStore.clearResizeData();
+                this.isFirstPage = !json.previous;
+                this.isLastPage = !json.next;
+                this.savePage();
             }))
+    }
+
+    savePage(){
+        if(this.page){
+            localStorage.setItem('lastPage', this.isLastPage.toString());
+            localStorage.setItem('firstPage', this.isFirstPage.toString());
+            localStorage.setItem('currentPage', this.page.toString())
+        }
+    }
+
+    nextPage(){
+        this.page += 1;
+        this.fetchPeople();
+        this.savePage();
+    }
+
+    prevPage(){
+        this.page -= 1;
+        this.fetchPeople();
+        this.savePage();
     }
 
     deletePeople(url: string): void{
