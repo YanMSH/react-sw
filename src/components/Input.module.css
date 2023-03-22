@@ -1,0 +1,16 @@
+.input {
+    display: block;
+}
+
+.input_error {
+    outline: 2px solid red;
+}
+
+.form_field {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+
