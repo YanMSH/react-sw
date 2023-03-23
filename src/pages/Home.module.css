@@ -1,14 +1,15 @@
-.buttons_wrapper {
+.wrapper {
+    min-height: 100%;
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin: 32px auto;
+    flex-direction: column;
 }
 
-.pagination {
+.placeholder {
     display: flex;
     justify-content: center;
-    gap: 16px;
     align-items: center;
-    margin-top:16px;
+    flex-grow: 1;
+    font-size: 32px;
+    min-height: 320px;
+    max-height: 380px;
 }

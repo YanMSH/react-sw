@@ -1,0 +1,9 @@
+.pagination {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    align-items: center;
+    margin-top:16px;
+}
