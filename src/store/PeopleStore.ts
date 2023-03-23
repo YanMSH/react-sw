@@ -72,6 +72,13 @@ class PeopleStore{
         }
     }
 
+    unsavePage(){
+        localStorage.removeItem('lastPage')
+        localStorage.removeItem('firstPage')
+        localStorage.removeItem('currentPage')
+        this.page = 1;
+    }
+
     nextPage(){
         this.page += 1;
         this.fetchPeople();
@@ -98,6 +105,7 @@ class PeopleStore{
     clearPeople(): void{
         this.people = [];
         this.unsavePeople();
+        this.unsavePage();
         this.status = 'init';
     }
 
@@ -117,14 +125,15 @@ class PeopleStore{
         localStorage.removeItem('peopleData')
     }
 
-    swapPeople(people1: People, people2: People){
-        const index1 = this.people.indexOf(people1);
-        const index2 = this.people.indexOf(people2);
-        this.setPeople(Utils.swapArrayElements(this.people, people1, people2));
+    swapPeopleByUrl(url1: string, url2: string){
+        const index1 = this.people.findIndex(people => people.url === url1);
+        const index2 = this.people.findIndex(people => people.url === url2);
         if(index1 > -1 && index2 > -1){
+            this.setPeople(Utils.swapArrayElementsByIndex(this.people, index1, index2));
             sizeStore.swapSizes(index1, index2);
         }
     }
+
     pushPeople(people: People){
         this.people = [...this.people, people];
         this.savePeople();

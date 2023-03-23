@@ -15,7 +15,7 @@ export default class Utils {
         return swapArr;
     }
 
-    static swapArrayElementsByIndex<T>(arr: T[] | (null | T)[], index1: number, index2: number) {
+    static swapArrayElementsByIndex(arr: any[], index1: number, index2: number) {
         const swapArr = [...arr];
         const tmp = swapArr[index2];
         swapArr[index2] = swapArr[index1];

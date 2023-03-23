@@ -6,9 +6,8 @@ import sizeStore from "../store/Size";
 
 interface TableRowProps {
     people: People;
-    dragStart: (e: React.DragEvent<HTMLTableRowElement>, people: People) => void;
-    dragEnd: (e: React.DragEvent<HTMLTableRowElement>) => void;
-    drop: (e: React.DragEvent<HTMLTableRowElement>, people: People) => void;
+    dragId: string | null;
+    setDragId: (id: string | null) => void;
 }
 
 interface resizeData {
@@ -16,18 +15,56 @@ interface resizeData {
     initialPosition: number;
 }
 
-const TableRow: FC<TableRowProps> = ({people, dragStart, drop, dragEnd}) => {
+const TableRow: FC<TableRowProps> = ({people, dragId, setDragId}) => {
 
     const [resizeHeight, setResizeHeight] = useState<resizeData | null>(null)
 
-
-    function dragOverHandler(e: React.DragEvent<HTMLTableRowElement>) {
-        e.preventDefault();
-        (e.target as HTMLElement).parentElement!.style.backgroundColor = 'gray';
+    function dragStartHandler(e: React.DragEvent<HTMLTableRowElement>) {
+        if(resizeHeight){
+            return
+        }
+        const id = (e.target as HTMLTableRowElement).dataset.url;
+        if(id){
+            setDragId(id);
+        }
     }
 
+    function dropHandler(e: React.DragEvent<HTMLTableRowElement>) {
+        e.preventDefault();
+        if(resizeHeight){
+            return
+        }
+        (e.target as HTMLElement).parentElement!.style.backgroundColor = '';
+        let target = e.target;
+        if(target instanceof HTMLDivElement){
+            target = (e.target as HTMLDivElement).parentElement!;
+        }
+        const id = (target as HTMLTableCellElement).parentElement!.dataset.url;
+        if(dragId){
+            peopleStore.swapPeopleByUrl(id!, dragId);
+        }
+        (e.target as HTMLElement).parentElement!.style.backgroundColor = '';
+        setDragId(null);
+    }
 
-    const dragEndHandler = (e: React.DragEvent<HTMLTableRowElement>) => {
+    const dragOverHandler = (e: React.DragEvent<HTMLTableRowElement>) => {
+        e.preventDefault();
+        if(resizeHeight){
+            return
+        }
+        (e.target as HTMLElement).parentElement!.style.backgroundColor = 'gray';
+    }
+    const dragEndHandler = (e: React.DragEvent<HTMLTableRowElement>) =>{
+        if(resizeHeight){
+            return
+        }
+        (e.target as HTMLElement).parentElement!.style.backgroundColor = '';
+    }
+
+    const dragLeaveHandler = (e: React.DragEvent<HTMLTableRowElement>) => {
+        if(resizeHeight){
+            return
+        }
         (e.target as HTMLElement).parentElement!.style.backgroundColor = '';
     }
 
@@ -37,15 +74,14 @@ const TableRow: FC<TableRowProps> = ({people, dragStart, drop, dragEnd}) => {
         setResizeHeight({rowHeight, initialPosition});
     }
 
-// TODO: Add flag for drag state. Toggle flag on resize;
-    function resizeMoveHandler(e: React.DragEvent<HTMLDivElement>) {
+    const resizeMoveHandler = (e: React.DragEvent<HTMLDivElement>) => {
         const change = e.clientY - resizeHeight!.initialPosition;
         if (resizeHeight) {
             (e.target as HTMLDivElement).parentElement!.parentElement!.style.height = `${(resizeHeight.rowHeight + change).toString()}px`;
         }
     }
 
-    function resizeEndHandler(e: React.DragEvent<HTMLDivElement>) {
+    const resizeEndHandler = (e: React.DragEvent<HTMLDivElement>) => {
         setResizeHeight(null);
         const rows = [...document.querySelectorAll(`.${styles.table__row}`)];
         const rowIndex = rows.indexOf((e.target as HTMLDivElement).parentElement!.parentElement!);
@@ -53,7 +89,7 @@ const TableRow: FC<TableRowProps> = ({people, dragStart, drop, dragEnd}) => {
         sizeStore.setResizedItem('row', rowIndex, height);
     }
 
-    function deleteButtonHandler(name: string, url: string) {
+    const deleteButtonHandler = (name: string, url: string) => {
         if (confirm(`Do you want to delete ${name}?`)) {
             peopleStore.deletePeople(url)
         }
@@ -62,21 +98,12 @@ const TableRow: FC<TableRowProps> = ({people, dragStart, drop, dragEnd}) => {
 
     return (
         <tr className={styles.table__row}
-            onDragStart={e => {
-                dragStart(e, people)
-            }}
-            onDragEnd={e => {
-                dragEnd(e)
-            }}
-            onDragLeave={e => {
-                dragEndHandler(e)
-            }}
-            onDragOver={e => {
-                dragOverHandler(e)
-            }}
-            onDrop={e => {
-                drop(e, people)
-            }}
+            data-url={people.url}
+            onDragStart={e => dragStartHandler(e)}
+            onDragEnd={e => dragEndHandler(e)}
+            onDragLeave={e => dragLeaveHandler(e)}
+            onDragOver={e => dragOverHandler(e)}
+            onDrop={e => dropHandler(e)}
             draggable={"true"}
         >
             <td>{people.name}
