@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {FC} from 'react';
 import styles from "./HomeControls.module.css";
 import {action} from "mobx";
 import peopleStore from "../store/PeopleStore";
 import {useNavigate} from "react-router-dom";
 
-const HomeControls = () => {
+const HomeControls: FC = () => {
     const navigate = useNavigate();
     const navigateToAddPage = () => {
         navigate('/add')

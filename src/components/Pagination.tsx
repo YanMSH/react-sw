@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {FC} from 'react';
 import styles from "./Pagination.module.css";
 import peopleStore from "../store/PeopleStore";
 import {observer} from "mobx-react-lite";
 
-const Pagination = observer(() => {
+const Pagination: FC = observer(() => {
 
     function nextButtonHandler(){
         peopleStore.nextPage();

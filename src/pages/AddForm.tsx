@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import styles from './AddForm.module.css';
 import {useValidation} from "../hooks/use-validation";
 import Input from "../components/Input";
@@ -6,7 +6,7 @@ import {emptyPeople, People} from "../models/People";
 import peopleStore from "../store/PeopleStore";
 import {useNavigate} from "react-router-dom";
 
-const AddForm = () => {
+const AddForm: FC = () => {
 
     function validation(v: string | number): boolean {
         return v.toString().trim().length > 0

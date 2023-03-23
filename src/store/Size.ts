@@ -1,5 +1,6 @@
 import {makeAutoObservable} from "mobx";
 import Utils from "../utils/Utils";
+import {COLUMNS_AMOUNT, ROWS_AMOUNT} from "../utils/Constants";
 
 interface resizeLoadData {
     columns: (number | null)[];
@@ -7,17 +8,15 @@ interface resizeLoadData {
 }
 
 class SizeStore {
-    // TODO: Make a separate constants file
-    ROWS_AMOUNT = 10;
-    COLUMNS_AMOUNT = 5;
+
     resizeData: resizeLoadData | null = null;
 
     constructor() {
         makeAutoObservable(this);
-        this.initStore();
+        this.init();
     }
 
-    initStore(): void {
+    init(): void {
         const dataString = localStorage.getItem('resizeData');
         if (dataString) {
             const peopleDataExists = !!localStorage.getItem('peopleData');
@@ -42,8 +41,8 @@ class SizeStore {
 
     clearResizeData(): void {
         this.resizeData = {
-            columns: Array(this.COLUMNS_AMOUNT).fill(null),
-            rows: Array(this.ROWS_AMOUNT).fill(null)
+            columns: Array(COLUMNS_AMOUNT).fill(null),
+            rows: Array(ROWS_AMOUNT).fill(null)
         }
         this.saveResizeData();
     }
@@ -77,6 +76,25 @@ class SizeStore {
             this.resizeData.rows = Utils.swapArrayElementsByIndex(this.resizeData.rows, size1, size2)
         }
         this.saveResizeData();
+    }
+
+    applySizes(type: 'rows' | 'cols', elems: Element[]){
+        if(this.resizeData){
+            if(type === 'cols'){
+                this.resizeData.columns.forEach((columnWidth, index) => {
+                    if (columnWidth) {
+                        (elems[index] as HTMLElement).style.width = `${columnWidth}px`;
+                    }
+                })
+            }
+            if(type === 'rows'){
+                this.resizeData.rows.forEach((rowHeight, index) => {
+                    if (rowHeight) {
+                        (elems[index] as HTMLElement).style.height = `${rowHeight}px`
+                    }
+                })
+            }
+        }
     }
 
     deleteSizeItem(index: number){
