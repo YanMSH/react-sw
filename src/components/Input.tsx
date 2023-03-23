@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import styles from './Input.module.css';
 
 interface InputProps {
@@ -11,7 +11,7 @@ interface InputProps {
     inputHasError: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
+const Input: FC<InputProps> = ({
                                          name,
                                          label,
                                          type,

@@ -1,14 +1,14 @@
 import './App.css'
-import Table from "./components/Table";
 import {Route, Routes} from "react-router-dom";
 import AddForm from "./pages/AddForm";
+import Home from "./pages/Home";
 
 function App() {
 
   return (
     <div className="App">
         <Routes>
-            <Route path={'/'} element={<Table />}/>
+            <Route path={'/'} element={<Home />}/>
             <Route path={'/add'} element={<AddForm />}/>
         </Routes>
 

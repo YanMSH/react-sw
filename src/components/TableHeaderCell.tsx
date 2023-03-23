@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import styles from './TableHeaderCell.module.css';
 import {action} from "mobx";
 import sizeStore from "../store/Size";
@@ -16,7 +16,7 @@ interface resizeData {
     initialPosition: number;
 }
 
-const TableHeaderCell: React.FC<TableHeaderCellProps> = ({label, sortField}) => {
+const TableHeaderCell: FC<TableHeaderCellProps> = ({label, sortField}) => {
 
     const [resizeWidth, setResizeWidth] = useState<null | resizeData>(null);
 

@@ -1,0 +1,14 @@
+.buttons_wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 32px auto;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    align-items: center;
+    margin-top:16px;
+}

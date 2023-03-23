@@ -5,6 +5,7 @@ th, td {
 .table__header {
     border: 1px solid white;
     position: relative;
+    padding: 4px 8px;
 }
 
 
